@@ -8,7 +8,6 @@ using DT_UI;
 using JetBrains.Annotations;
 using TMPro.EditorUtilities;
 
-[System.Serializable]
 public class GameManager : MonoBehaviour
 {
     #region GAME_MANAGER_BEGINS
@@ -16,6 +15,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UIManager _ui_manager;
     [SerializeField] private GridManager _grid_manager;
     [SerializeField] private PlayerCoordinate playerPosition;
+    public Sprite[] playerSprites;
+    public Sprite[] enemySprites;
 
     private void Awake()
     {
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour
             //Do something when the left button will be clicked.
             if (_grid_manager.LeftSafe(playerPosition.row, playerPosition.col))
             {
+                _grid_manager.VanishColors();
                 _grid_manager.Shift(playerPosition.row, playerPosition.col, playerPosition.row, playerPosition.col - 1);
             }
         });
@@ -47,6 +49,7 @@ public class GameManager : MonoBehaviour
             //Do something when the right button will be clicked.
             if (_grid_manager.RightSafe(playerPosition.row, playerPosition.col))
             {
+                _grid_manager.VanishColors();
                 _grid_manager.Shift(playerPosition.row, playerPosition.col, playerPosition.row, playerPosition.col + 1);
             }
         });
@@ -56,6 +59,7 @@ public class GameManager : MonoBehaviour
             //Do something when the up button will be clicked.
             if (_grid_manager.UpSafe(playerPosition.row, playerPosition.col))
             {
+                _grid_manager.VanishColors();
                 _grid_manager.Shift(playerPosition.row, playerPosition.col, playerPosition.row - 1, playerPosition.col);
             }
         });
@@ -65,8 +69,15 @@ public class GameManager : MonoBehaviour
             //Do something when the down button will be clicked.
             if (_grid_manager.DownSafe(playerPosition.row, playerPosition.col))
             {
+                _grid_manager.VanishColors();
                 _grid_manager.Shift(playerPosition.row, playerPosition.col, playerPosition.row + 1, playerPosition.col);
             }
+        });
+
+        _ui_manager.GetButton(key.fire).onClick.AddListener(() =>
+        {
+            _grid_manager.VanishColors();
+            _grid_manager.Fire(playerPosition.row, playerPosition.col, 2);
         });
     }
 
@@ -74,6 +85,7 @@ public class GameManager : MonoBehaviour
     {
         playerPosition = new PlayerCoordinate { row = r, col = c };
     }
+
     #endregion
 
     #region STRUCTURES
