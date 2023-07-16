@@ -131,7 +131,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1459077287044272717}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 590a76bb554bace44b5c222a6d7bafd7, type: 2}
   m_CullingMode: 0
@@ -235,6 +235,10 @@ PrefabInstance:
     - target: {fileID: 2721174498249882156, guid: 745da9fb651c84d4ea59ace4cdcfd0e8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3806640864775365403, guid: 745da9fb651c84d4ea59ace4cdcfd0e8, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6975442940324374629, guid: 745da9fb651c84d4ea59ace4cdcfd0e8, type: 3}
       propertyPath: m_Enabled

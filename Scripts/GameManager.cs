@@ -7,6 +7,7 @@ using TMPro;
 using DT_UI;
 using JetBrains.Annotations;
 using TMPro.EditorUtilities;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,11 +16,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UIManager _ui_manager;
     [SerializeField] private GridManager _grid_manager;
     [SerializeField] private PlayerCoordinate playerPosition;
+    public TMP_Text _score_Text;
+    public int _score;
     public Sprite[] playerSprites;
     public Sprite[] enemySprites;
+    public int x;
 
     private void Awake()
     {
+        x = Random.Range(0, 3);
         _ui_manager = FindObjectOfType<UIManager>();
         _grid_manager = FindObjectOfType<GridManager>();
     }
@@ -78,6 +83,7 @@ public class GameManager : MonoBehaviour
         {
             _grid_manager.VanishColors();
             _grid_manager.Fire(playerPosition.row, playerPosition.col, 2);
+            _grid_manager.CheckEnemy();
         });
     }
 

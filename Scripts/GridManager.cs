@@ -5,6 +5,7 @@ using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.UI;
 
+#region DATA_STRUCTURES
 class Graph
 {
     private Button[,] _buttons;
@@ -48,7 +49,7 @@ class Graph
         DFS(row + 1, col - 1, visited, result);
     }
 
-    public List<Button> GetBFS(int row, int col)
+    public List<Button> GetBFS(int row, int col, int mode)
     {
         List<Button> result = new List<Button>();
         bool[,] visited = new bool[_rows, _cols];
@@ -66,18 +67,42 @@ class Graph
             Button button = _buttons[currentRow, currentCol];
             result.Add(button);
 
-            // Check neighbors in row and column directions
-            CheckAndEnqueue(currentRow + 1, currentCol, visited, queue);
-            CheckAndEnqueue(currentRow - 1, currentCol, visited, queue);
-            CheckAndEnqueue(currentRow, currentCol + 1, visited, queue);
-            CheckAndEnqueue(currentRow, currentCol - 1, visited, queue);
+            switch (mode)
+            {
+                // Check neighbors in row and column directions
+                case 0:
+                    CheckAndEnqueue(currentRow + 1, currentCol, visited, queue);//Vertical //Down
+                    break;
+                case 1:
+                    CheckAndEnqueue(currentRow - 1, currentCol, visited, queue); //Up
+                    break;
 
-            // Check neighbors diagonally
-            CheckAndEnqueue(currentRow + 1, currentCol + 1, visited, queue);
-            CheckAndEnqueue(currentRow - 1, currentCol - 1, visited, queue);
 
-            CheckAndEnqueue(currentRow - 1, currentCol + 1, visited, queue);
-            CheckAndEnqueue(currentRow + 1, currentCol - 1, visited, queue);
+                case 2:
+                    CheckAndEnqueue(currentRow, currentCol + 1, visited, queue);//Horizontal //Right
+                    break;
+                case 3:
+                    CheckAndEnqueue(currentRow, currentCol - 1, visited, queue); //Left
+                    break;
+
+
+
+                // Check neighbors diagonally
+                case 4:
+                    CheckAndEnqueue(currentRow + 1, currentCol + 1, visited, queue);
+                    break;
+                case 5:
+                    CheckAndEnqueue(currentRow - 1, currentCol - 1, visited, queue);
+                    break;
+
+
+                case 6:
+                    CheckAndEnqueue(currentRow - 1, currentCol + 1, visited, queue);
+                    break;
+                case 7:
+                    CheckAndEnqueue(currentRow + 1, currentCol - 1, visited, queue);
+                    break;
+            }
         }
 
         return result;
@@ -92,19 +117,31 @@ class Graph
         }
     }
 }
+#endregion
 
 public class GridManager : MonoBehaviour
 {
     [SerializeField] Button buttonPrefab;
     [SerializeField] Button[,] buttons;
     [SerializeField] GameManager _game_Manager;
-    [SerializeField] Stack<Button> nodes;
+    /*    [SerializeField] Stack<Button> nodes;*/
+    public int current_move;
+    [SerializeField] Queue<int> shapesStack = new Queue<int>();
+    private Dictionary<int, Color> color;
+    [SerializeField] IndicatorGrid _indicator_Grid;
 
     private void Start()
     {
         _game_Manager = FindObjectOfType<GameManager>();
+        _indicator_Grid = FindObjectOfType<IndicatorGrid>();
+        color = new Dictionary<int, Color>();
+
+        color.Add(0, Color.green);
+        color.Add(1, Color.blue);
+        color.Add(2, Color.yellow);
         CreateGrid();
         EnemyAISpawn();
+        Shapes();
     }
 
     void CreateGrid()
@@ -125,9 +162,12 @@ public class GridManager : MonoBehaviour
                 int buttonCol = col;
                 button.name = "BTN: " + buttonRow.ToString() + " " + buttonCol.ToString();
                 //Player position
+                int x = PlayerPrefs.GetInt("MySprites");
                 if (buttonRow == 0 && buttonCol == 0)
                 {
-                    buttons[buttonRow, buttonCol].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+                    var m = buttons[buttonRow, buttonCol];
+                    m.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+                    m.image.color = color[_game_Manager.x];
                 }
                 button.onClick.AddListener(() =>
                 {
@@ -142,8 +182,14 @@ public class GridManager : MonoBehaviour
     {
         if (buttons[r1, c1].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled == false)
         {
+            Color s_color = buttons[r, c].image.color;
+
             buttons[r, c].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
+            buttons[r, c].image.color = Color.white;
+
             buttons[r1, c1].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+            buttons[r1, c1].image.color = s_color;
+
             _game_Manager.UpdatePlayerPosition(r1, c1);
         }
     }
@@ -151,45 +197,32 @@ public class GridManager : MonoBehaviour
     public void Fire(int r, int c, int d)
     {
         Graph graph = new Graph(buttons);
-        if(Safe(r, c))
+        if (Safe(r, c))
         {
-            ActivateColors(graph.GetBFS(r, c));
+            if (shapesStack.Count > 0)
+            {
+                current_move = shapesStack.Dequeue();
+                ActivateColors(graph.GetBFS(r, c, current_move));
+                _indicator_Grid.ChangeSignal(shapesStack);
+            }
         }
-/*        if (RightSafe(r, c + 1))
-        {
-            ActivateColors(graph.GetBFS(r, c + 1));
-            
-        }
-        if(LeftSafe(r, c - 1))
-        {
-            ActivateColors(graph.GetBFS(r, c - 1));
-
-        }
-        if(UpSafe(r - 1, c))
-        {
-            ActivateColors(graph.GetBFS(r - 1, c));
-
-        }
-        if(DownSafe(r + 1, c))
-        {
-            ActivateColors(graph.GetBFS(r + 1, c));
-
-        }*/
     }
 
     private void ActivateColors(List<Button> nodes)
     {
-        foreach(Button node in nodes)
+        foreach (Button node in nodes)
         {
-            node.image.color = Color.red;
+            if (/*!node.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled &&*/
+                node.image.color != color[_game_Manager.x])
+                node.image.color = Color.red;
         }
     }
 
     public void VanishColors()
     {
-        for(int row = 0; row < 5; row ++)
+        for (int row = 0; row < 5; row++)
         {
-            for(int col = 0; col < 4; col ++)
+            for (int col = 0; col < 4; col++)
             {
                 if (buttons[row, col].image.color == Color.red)
                 {
@@ -199,7 +232,44 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    private void Shapes()
+    {
+        _indicator_Grid.ChangeSignal(shapesStack);
+        StartCoroutine(ShapePush(true));
+    }
+
+    private IEnumerator ShapePush(bool value)
+    {
+        while (value)
+        {
+
+            yield return new WaitForSeconds(2);
+            int m = Random.Range(0, 8);
+            shapesStack.Enqueue(m);
+        }
+    }
+
     #region ENEMY_ACTIVITY
+
+    public void CheckEnemy()
+    {
+        for (int row = 0; row < 5; row++)
+        {
+            for (int col = 0; col < 4; col++)
+            {
+                if (buttons[row, col].image.color == Color.red)
+                {
+                    if (buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled)
+                    {
+                        _game_Manager._score++;
+                        _game_Manager._score_Text.text = "Score : " + _game_Manager._score.ToString();
+                        buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
+                    }
+                }
+            }
+        }
+    }
+
     private void EnemyAISpawn()
     {
         int row = Random.Range(0, 5);
