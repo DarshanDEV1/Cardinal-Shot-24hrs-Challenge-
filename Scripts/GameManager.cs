@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     //This is the game manager where  all the track of the progress of the games are detected or actions will be toook from here.
     [SerializeField] private UIManager _ui_manager;
     [SerializeField] private GridManager _grid_manager;
-    [SerializeField] private PlayerCoordinate playerPosition;
+    public PlayerCoordinate playerPosition;
     public TMP_Text _score_Text;
     public int _score;
     public Sprite[] playerSprites;
@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
             //Do something when the left button will be clicked.
             if (_grid_manager.LeftSafe(playerPosition.row, playerPosition.col))
             {
-                _grid_manager.VanishColors();
+                _grid_manager.VanishColors(true);
                 _grid_manager.Shift(playerPosition.row, playerPosition.col, playerPosition.row, playerPosition.col - 1);
             }
         });
@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
             //Do something when the right button will be clicked.
             if (_grid_manager.RightSafe(playerPosition.row, playerPosition.col))
             {
-                _grid_manager.VanishColors();
+                _grid_manager.VanishColors(true);
                 _grid_manager.Shift(playerPosition.row, playerPosition.col, playerPosition.row, playerPosition.col + 1);
             }
         });
@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
             //Do something when the up button will be clicked.
             if (_grid_manager.UpSafe(playerPosition.row, playerPosition.col))
             {
-                _grid_manager.VanishColors();
+                _grid_manager.VanishColors(true);
                 _grid_manager.Shift(playerPosition.row, playerPosition.col, playerPosition.row - 1, playerPosition.col);
             }
         });
@@ -74,14 +74,14 @@ public class GameManager : MonoBehaviour
             //Do something when the down button will be clicked.
             if (_grid_manager.DownSafe(playerPosition.row, playerPosition.col))
             {
-                _grid_manager.VanishColors();
+                _grid_manager.VanishColors(true);
                 _grid_manager.Shift(playerPosition.row, playerPosition.col, playerPosition.row + 1, playerPosition.col);
             }
         });
 
         _ui_manager.GetButton(key.fire).onClick.AddListener(() =>
         {
-            _grid_manager.VanishColors();
+            _grid_manager.VanishColors(true);
             _grid_manager.Fire(playerPosition.row, playerPosition.col, 2);
             _grid_manager.CheckEnemy();
         });
