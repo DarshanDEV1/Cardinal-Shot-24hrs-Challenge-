@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -279,6 +277,7 @@ public class GridManager : MonoBehaviour
                     if (buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled)
                     {
                         _game_Manager._score--;
+                        _game_Manager.PlayAudio(2);
                         _game_Manager._score_Text.text = "Score : " + _game_Manager._score.ToString();
                         buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
                         PlayerSpawn();
@@ -331,6 +330,7 @@ public class GridManager : MonoBehaviour
                     if (buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled)
                     {
                         _game_Manager._score++;
+                        _game_Manager.PlayAudio(1);
                         _game_Manager._score_Text.text = "Score : " + _game_Manager._score.ToString();
                         buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
                         EnemyAISpawn();

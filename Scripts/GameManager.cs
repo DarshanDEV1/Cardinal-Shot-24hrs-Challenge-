@@ -1,13 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DT_UI;
-using JetBrains.Annotations;
-using TMPro.EditorUtilities;
-using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,6 +18,7 @@ public class GameManager : MonoBehaviour
     public Sprite[] playerSprites;
     public Sprite[] enemySprites;
     public int x;
+    [SerializeField] AudioClip[] soundEffects;
 
     private void Awake()
     {
@@ -82,14 +80,29 @@ public class GameManager : MonoBehaviour
         _ui_manager.GetButton(key.fire).onClick.AddListener(() =>
         {
             _grid_manager.VanishColors(true);
+
+            PlayAudio(0);//Play shoot audio clip from the array;
+
             _grid_manager.Fire(playerPosition.row, playerPosition.col, 2);
             _grid_manager.CheckEnemy();
+        });
+
+        _ui_manager.GetButton(key.back).onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene("StartScene");
         });
     }
 
     public void UpdatePlayerPosition(int r, int c)
     {
         playerPosition = new PlayerCoordinate { row = r, col = c };
+    }
+    
+    public void PlayAudio(int index)
+    {
+        var audio = gameObject.AddComponent<AudioSource>();
+        audio.clip = soundEffects[index];
+        audio.Play();
     }
 
     #endregion

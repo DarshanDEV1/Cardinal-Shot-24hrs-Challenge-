@@ -12,5 +12,9 @@ public class KeyValue
     public string down = "MoveDown";
 
     public string fire = "Fire";
+    public string play = "Play";
+
+    public string back = "Back";
+    public string exit = "Exit";
     #endregion
 }
