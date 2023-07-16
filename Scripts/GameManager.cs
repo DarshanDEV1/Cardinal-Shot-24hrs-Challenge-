@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public PlayerCoordinate playerPosition;
     public TMP_Text _score_Text;
     public int _score;
+    public int _high_score;
     public Sprite[] playerSprites;
     public Sprite[] enemySprites;
     public int x;
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        _high_score = PlayerPrefs.GetInt("Score", 0);
         x = Random.Range(0, 3);
         _ui_manager = FindObjectOfType<UIManager>();
         _grid_manager = FindObjectOfType<GridManager>();
@@ -103,6 +105,14 @@ public class GameManager : MonoBehaviour
         var audio = gameObject.AddComponent<AudioSource>();
         audio.clip = soundEffects[index];
         audio.Play();
+    }
+
+    public void HighScoreUpdate(int score)
+    {
+        if(score > _high_score)
+        {
+            PlayerPrefs.SetInt("Score", score);
+        }
     }
 
     #endregion

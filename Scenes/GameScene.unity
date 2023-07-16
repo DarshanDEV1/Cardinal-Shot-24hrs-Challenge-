@@ -266,6 +266,7 @@ MonoBehaviour:
     col: 0
   _score_Text: {fileID: 6734470631813159753}
   _score: 0
+  _high_score: 0
   playerSprites:
   - {fileID: 21300000, guid: 0ecf24120965eb14a8888a623f3818d4, type: 3}
   - {fileID: 21300000, guid: 3a7de7edbdf457f4ca42bc36f4147d0c, type: 3}

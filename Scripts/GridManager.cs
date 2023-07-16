@@ -278,6 +278,7 @@ public class GridManager : MonoBehaviour
                     {
                         _game_Manager._score--;
                         _game_Manager.PlayAudio(2);
+                        _game_Manager.HighScoreUpdate(_game_Manager._score);
                         _game_Manager._score_Text.text = "Score : " + _game_Manager._score.ToString();
                         buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
                         PlayerSpawn();
@@ -330,6 +331,7 @@ public class GridManager : MonoBehaviour
                     if (buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled)
                     {
                         _game_Manager._score++;
+                        _game_Manager.HighScoreUpdate(_game_Manager._score);
                         _game_Manager.PlayAudio(1);
                         _game_Manager._score_Text.text = "Score : " + _game_Manager._score.ToString();
                         buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
@@ -368,7 +370,7 @@ public class GridManager : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(2f);
             VanishColors(false);
             EnemyAIActivity();
             CheckPlayer();
