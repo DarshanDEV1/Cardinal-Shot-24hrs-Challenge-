@@ -1145,7 +1145,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 175, y: -125}
+  m_AnchoredPosition: {x: 175, y: -124.999985}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1150308758
@@ -1367,7 +1367,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -185}
+  m_AnchoredPosition: {x: 0, y: -185.00003}
   m_SizeDelta: {x: -40, y: -490}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1833847261
@@ -1666,7 +1666,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 544.99994, y: -125}
+  m_AnchoredPosition: {x: 544.99994, y: -124.999985}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2016130427
@@ -1799,6 +1799,7 @@ MonoBehaviour:
   playButton: {fileID: 211291457}
   acceptButton: {fileID: 1150308758}
   rejectButton: {fileID: 2016130427}
+  onlineModeButton: {fileID: 0}
   exitConfigPanel: {fileID: 609653880}
   goodByePanel: {fileID: 1531268730}
   _high_Score: {fileID: 431537213}
@@ -2485,13 +2486,13 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3567998389084624432}
-  - {fileID: 3070235244579386644}
   - {fileID: 8023790940967003935}
-  - {fileID: 4582487379047904267}
-  - {fileID: 609653881}
-  - {fileID: 1531268731}
   - {fileID: 431537212}
   - {fileID: 117166738}
+  - {fileID: 4582487379047904267}
+  - {fileID: 3070235244579386644}
+  - {fileID: 609653881}
+  - {fileID: 1531268731}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2563,7 +2564,7 @@ GameObject:
   - component: {fileID: 3472900500982578384}
   - component: {fileID: 3911702311958561126}
   m_Layer: 5
-  m_Name: Score
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
