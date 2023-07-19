@@ -10,13 +10,14 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     void Awake()
     {
         adUnitId = androidAdUnitId;
-        LoadAd();
+        //LoadAd();
     }
 
     public void LoadAd()
     {
         print("Loading interstitial!!");
         Advertisement.Load(adUnitId, this);
+        //ShowAd();
     }
 
     public void OnUnityAdsAdLoaded(string placementId)

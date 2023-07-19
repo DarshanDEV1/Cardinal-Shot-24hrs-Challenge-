@@ -4,14 +4,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-#region DATA_STRUCTURES
-class Graph
+#region DATA_STRUCTURES_TUTORIAL
+class Graph_TuT
 {
     private Button[,] _buttons;
     private int _rows;
     private int _cols;
 
-    public Graph(Button[,] buttons)
+    public Graph_TuT(Button[,] buttons)
     {
         _buttons = buttons;
         _rows = buttons.GetLength(0);
@@ -118,19 +118,15 @@ class Graph
 }
 #endregion
 
-public class GridManager : MonoBehaviour
+public class TuTGridManager : MonoBehaviour
 {
-    #region TUTORIALS ARE TO BE ADDED
-    //Tutorials are to be added for the improvement of the user interaction
-    #endregion
-
     [SerializeField] Button buttonPrefab;
     [SerializeField] Button[,] buttons;
-    [SerializeField] GameManager _game_Manager;
+    [SerializeField] TuTGameManager _game_Manager;
     /*    [SerializeField] Stack<Button> nodes;*/
     public int current_move;
     [SerializeField] Queue<int> shapesStack = new Queue<int>();
-    [SerializeField] IndicatorGrid _indicator_Grid;
+    [SerializeField] TuTIndicatorGrid _indicator_Grid;
     [SerializeField] EnemyPosition _enemy_Position;
     [SerializeField] GameObject _gameOverPanel;
 
@@ -138,8 +134,8 @@ public class GridManager : MonoBehaviour
 
     private void Start()
     {
-        _game_Manager = FindObjectOfType<GameManager>();
-        _indicator_Grid = FindObjectOfType<IndicatorGrid>();
+        _game_Manager = FindObjectOfType<TuTGameManager>();
+        _indicator_Grid = FindObjectOfType<TuTIndicatorGrid>();
         _enemy_Position = new EnemyPosition { row = 2, col = 2 };
 
         _gameOverPanel.SetActive(false);
@@ -199,7 +195,7 @@ public class GridManager : MonoBehaviour
 
     public void Fire(int r, int c, int d)
     {
-        Graph graph = new Graph(buttons);
+        Graph_TuT graph = new Graph_TuT(buttons);
         if (Safe(r, c))
         {
             if (shapesStack.Count > 0)
@@ -268,8 +264,8 @@ public class GridManager : MonoBehaviour
         {
 
             yield return new WaitForSeconds(1f);
-            int m = Random.Range(0, 8);
-            shapesStack.Enqueue(m);
+            //int m = Random.Range(0, 8);
+            shapesStack.Enqueue(2);
         }
     }
 
@@ -308,14 +304,14 @@ public class GridManager : MonoBehaviour
         _gameOverPanel.SetActive(true);
         yield return new WaitForSeconds(1f);
         _gameOverPanel.SetActive(false);
-        SceneManager.LoadScene("StartScene");
+        SceneManager.LoadScene("GameScene");
         StopAllCoroutines();
     }
 
     private void PlayerRespawn(int buttonRow, int buttonCol)
     {
         //Player position
-        if (buttonRow == 0 && buttonCol == 0)
+        if (buttonRow == 1 && buttonCol == 1)
         {
             var m = buttons[buttonRow, buttonCol];
             m.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
@@ -364,13 +360,12 @@ public class GridManager : MonoBehaviour
                         _game_Manager.PlayAudio(1);
                         _game_Manager._score_Text.text = "Score : " + _game_Manager._score.ToString();
                         buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
-                        if(_game_Manager._score > 10)
-                        {
-                            EnemyAISpawn();
-                            EnemyAISpawn();
-                        }
-                        else
-                            EnemyAISpawn();// To be modified in the future
+                        //EnemyAISpawn();// To be modified in the future
+                        //In tutorial rather than spawning an enemy we have to mark the tutorial as completed
+                        //And then reload the gameplay scene to start the gameplay.
+                        PlayerPrefs.SetInt("Tutorial", 0);
+                        StopAllCoroutines();
+                        SceneManager.LoadScene("GameScene");
                     }
                 }
             }
@@ -380,13 +375,13 @@ public class GridManager : MonoBehaviour
     private void EnemyAISpawn()
     {
         int row = Random.Range(0, 5);
-        int col = Random.Range(0, 4);
+        int col = Random.Range(2, 4);
 
         while (row == _game_Manager.playerPosition.row || col == _game_Manager.playerPosition.col
             || buttons[row, col].image.color == Color.red)
         {
             row = Random.Range(0, 5);
-            col = Random.Range(0, 4);
+            col = Random.Range(2, 4);
         }
         if (!buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled)
         {
@@ -398,8 +393,11 @@ public class GridManager : MonoBehaviour
 
     private void EnemyAIActivity()
     {
-        Graph graph = new Graph(buttons);
-        ActivateColors(graph.GetBFS(_enemy_Position.row, _enemy_Position.col, Random.Range(0, 8)), false);
+        if (_game_Manager.buttonTutorial)
+        {
+            Graph graph = new Graph(buttons);
+            ActivateColors(graph.GetBFS(_enemy_Position.row, _enemy_Position.col, Random.Range(0, 8)), false);
+        }
     }
 
     private IEnumerator EnemyAIActivityInterval()

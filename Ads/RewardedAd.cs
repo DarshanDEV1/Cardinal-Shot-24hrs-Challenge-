@@ -11,7 +11,7 @@ public class RewardedAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowLis
     void Awake()
     {
         adUnitId = androidAdUnitId;
-        LoadAd();
+        //LoadAd();
     }
 
     public void LoadAd()
