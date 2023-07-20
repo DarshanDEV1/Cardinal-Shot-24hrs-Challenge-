@@ -1,7 +1,9 @@
+using Photon.Pun.Demo.PunBasics;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 #region DATA_STRUCTURES
@@ -180,18 +182,19 @@ public class GridManager : MonoBehaviour
 
     public void Shift(int r, int c, int r1, int c1) //This method is used to update the player sprite location.
     {
-        if (buttons[r1, c1].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled == false)
+        if (buttons[r1, c1].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled == false
+            && buttons[r1, c1].transform.GetChild(1).GetComponent<SpriteRenderer>().enabled == false)
         {
             //Color s_color = buttons[r, c].image.color;
-            Color s_color = buttons[r, c].transform.GetChild(0).GetComponent<SpriteRenderer>().color;
+            //Color s_color = buttons[r, c].transform.GetChild(0).GetComponent<SpriteRenderer>().color;
 
             buttons[r, c].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
             //buttons[r, c].image.color = Color.white;
-            buttons[r, c].transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.white;
+            //buttons[r, c].transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.white;
 
             buttons[r1, c1].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
             //buttons[r1, c1].image.color = s_color;
-            buttons[r1, c1].transform.GetChild(0).GetComponent<SpriteRenderer>().color = s_color;
+            //buttons[r1, c1].transform.GetChild(0).GetComponent<SpriteRenderer>().color = s_color;
 
             _game_Manager.UpdatePlayerPosition(r1, c1);
         }
@@ -219,18 +222,28 @@ public class GridManager : MonoBehaviour
             {
                 if (node != buttons[_game_Manager.playerPosition.row, _game_Manager.playerPosition.col])
                 {
-                    node.image.color = Color.red;
+                    //node.image.color = Color.red;
+                    StartCoroutine(PathVanisher(Color.red, node, 1f));
                 }
             }
             else
             {
                 if (node != buttons[_enemy_Position.row, _enemy_Position.col])
                 {
-                    node.image.color = Color.cyan;
+                    //node.image.color = Color.cyan;
+                    StartCoroutine(PathVanisher(Color.cyan, node, 1.5f));
                 }
             }
         }
     }
+
+    private IEnumerator PathVanisher(Color color, Button button, float time)
+    {
+        button.image.color = color;
+        yield return new WaitForSeconds(time);
+        button.image.color = Color.white;
+    }
+
 
     public void VanishColors(bool value)
     {
@@ -319,12 +332,13 @@ public class GridManager : MonoBehaviour
         {
             var m = buttons[buttonRow, buttonCol];
             m.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+
             //m.image.color = color[_game_Manager.x];
             //m.transform.GetChild(0).GetComponent<SpriteRenderer>().color = color[_game_Manager.x];
             //Debug.Log(color[_game_Manager.x]);
-            x = _game_Manager.x;
-            m.transform.GetChild(0).GetComponent<SpriteRenderer>().color = (x == 0 ? Color.green :
-                                                                            x == 1 ? Color.blue : Color.yellow);
+            //x = _game_Manager.x;
+            /*m.transform.GetChild(0).GetComponent<SpriteRenderer>().color = (x == 0 ? Color.green :
+                                                                            x == 1 ? Color.blue : Color.yellow);*/
         }
     }
 
@@ -339,7 +353,8 @@ public class GridManager : MonoBehaviour
             row = Random.Range(0, 5);
             col = Random.Range(0, 4);
         }
-        if (!buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled)
+        if (!buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled
+            && !buttons[row, col].transform.GetChild(1).GetComponent<SpriteRenderer>().enabled)
         {
             buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
             _game_Manager.UpdatePlayerPosition(row, col);
@@ -357,20 +372,48 @@ public class GridManager : MonoBehaviour
             {
                 if (buttons[row, col].image.color == Color.red)
                 {
-                    if (buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled)
+                    if (buttons[row, col].transform.GetChild(1).GetComponent<SpriteRenderer>().enabled)
                     {
                         _game_Manager._score++;
                         _game_Manager.HighScoreUpdate(_game_Manager._score);
                         _game_Manager.PlayAudio(1);
                         _game_Manager._score_Text.text = "Score : " + _game_Manager._score.ToString();
-                        buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
-                        if(_game_Manager._score > 10)
+                        buttons[row, col].transform.GetChild(1).GetComponent<SpriteRenderer>().enabled = false;
+
+
+                        /*int number = 0;
+                        if (
+                        _game_Manager._score >
+
+                            (_game_Manager._score > 5 ? number = Random.Range(5, 11) :
+                            _game_Manager._score > 10 ? number = Random.Range(11, 16) :
+                            _game_Manager._score > 15 ? number = Random.Range(16, 21) :
+                            _game_Manager._score > 20 ? number = Random.Range(21, 26) :
+                        _game_Manager._score > 25 ? number = _game_Manager._score + 10 :
+                        number = Random.Range(1, 101))
+
+                            && _game_Manager._score < number + 5
+
+                           )
+                        {
+                            for (int i = 0;
+
+                                i < (number > 5 && number < 10 ? 1 :
+                                    ((Random.Range(0, 2)) == 1 ? (Mathf.Ceil(number / 10)) :
+                                    Mathf.Floor(number / 10)));
+
+                                i++) EnemyAISpawn(); //This is the for loop for spawning random number of enemies
+                        }*///Depricated Logic
+
+
+                        int numberOfEnemies = _game_Manager._score < 25 ? 1 :
+                                Mathf.CeilToInt(_game_Manager._score / 20.0f);
+
+                        // Spawn the enemies
+                        for (int i = 0; i < numberOfEnemies; i++)
                         {
                             EnemyAISpawn();
-                            EnemyAISpawn();
                         }
-                        else
-                            EnemyAISpawn();// To be modified in the future
                     }
                 }
             }
@@ -388,10 +431,11 @@ public class GridManager : MonoBehaviour
             row = Random.Range(0, 5);
             col = Random.Range(0, 4);
         }
-        if (!buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled)
+        if (!buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled
+            && !buttons[row, col].transform.GetChild(1).GetComponent<SpriteRenderer>().enabled)
         {
-            buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
-            buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.red;
+            buttons[row, col].transform.GetChild(1).GetComponent<SpriteRenderer>().enabled = true;
+            //buttons[row, col].transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.red;
             _enemy_Position = new EnemyPosition { row = row, col = col };
         }
     }

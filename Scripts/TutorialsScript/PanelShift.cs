@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,7 @@ public class PanelShift : MonoBehaviour
 
     [SerializeField] private GameObject[] list = new GameObject[5];
     public bool[] bools = new bool[5];
+    [SerializeField] private TuTGameManager gameManager;
 
     public void ActivateDeactivatePanels(bool config, int panel)
     {
@@ -32,7 +34,8 @@ public class PanelShift : MonoBehaviour
                 {
                     //list[i].SetActive(true);
                     list[i].GetComponent<Button>().interactable = true;
-                    StartCoroutine(ButtonView(list[i]));
+                    if(gameManager.buttonTutorial)
+                        StartCoroutine(ButtonView(list[i]));
                 }
             }
         }
